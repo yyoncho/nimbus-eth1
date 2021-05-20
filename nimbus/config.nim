@@ -109,6 +109,7 @@ type
     logFile*: string              ## Log file
     logMetrics*: bool             ## Enable metrics logging
     logMetricsInterval*: int      ## Metrics logging interval
+    evm*: string                  ## Alternative EVM path to load
 
   PruneMode* {.pure.} = enum
     Full
@@ -651,6 +652,8 @@ proc processDebugArguments(key, value: string): ConfigStatus =
     result = processInteger(value, res)
     if result == Success:
       config.debug.logMetricsInterval = res
+  elif skey == "evm":
+    config.debug.evm = value
   else:
     result = EmptyOption
 
@@ -802,6 +805,7 @@ LOGGING AND DEBUGGING OPTIONS:
   --logmetricsinterval:<value> Interval at which to log metrics, in seconds (default: 10)
   --debug                 Enable debug mode
   --test:<value>          Perform specified test
+  --evm:<path>            Load alternative EVM from EVMC-compatible shared library (.so/.dll/.dylib)
 """ % [
     NimbusIdent,
     join(logLevels, ", "),
