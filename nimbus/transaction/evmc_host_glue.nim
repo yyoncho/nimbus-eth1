@@ -11,7 +11,7 @@
 when not declaredInScope(included_from_host_services):
   {.error: "Do not import this file directly, import host_services instead".}
 
-import evmc/evmc
+import evmc/evmc, ./evmc_dynamic_loader
 
 template toHost(p: evmc_host_context): TransactionHost =
   cast[TransactionHost](p)
@@ -88,16 +88,9 @@ proc evmcGetHostInterface(): ref evmc_host_interface =
     )
   return theHostInterface
 
-# The built-in Nimbus EVM, via imported C function.
-proc evmc_create_nimbus_evm(): ptr evmc_vm {.cdecl, importc.}
-
-# Pull in the definition of the above function because we're not building it as
-# a separate library yet.
-import ./evmc_vm_glue
-
 # This must be named `call` to show as "call" when traced by the `show` macro.
 proc call(host: TransactionHost): EvmcResult {.show, inline.} =
-  let vm = evmc_create_nimbus_evm()
+  let vm = evmcLoadVMCached()
   if vm.isNil:
     echo "Warning: No EVM"
     # Nim defaults are fine for all other fields in the result object.
