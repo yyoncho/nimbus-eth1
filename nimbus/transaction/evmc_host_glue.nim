@@ -21,15 +21,15 @@ proc accountExists(p: evmc_host_context, address: var evmc_address): c99bool {.c
 
 proc getStorage(p: evmc_host_context, address: var evmc_address,
                 key: var evmc_bytes32): evmc_bytes32 {.cdecl.} =
-  toHost(p).getStorage(address.fromEvmc, key.fromEvmc).toEvmc
+  toHost(p).getStorage(address.fromEvmc, key.flip256.fromEvmc).toEvmc.flip256
 
 proc setStorage(p: evmc_host_context, address: var evmc_address,
                 key, value: var evmc_bytes32): evmc_storage_status {.cdecl.} =
-  toHost(p).setStorage(address.fromEvmc, key.fromEvmc, value.fromEvmc)
+  toHost(p).setStorage(address.fromEvmc, key.flip256.fromEvmc, value.flip256.fromEvmc)
 
 proc getBalance(p: evmc_host_context,
                 address: var evmc_address): evmc_uint256be {.cdecl.} =
-    toHost(p).getBalance(address.fromEvmc).toEvmc
+    toHost(p).getBalance(address.fromEvmc).toEvmc.flip256
 
 proc getCodeSize(p: evmc_host_context,
                  address: var evmc_address): csize_t {.cdecl.} =
@@ -48,10 +48,15 @@ proc selfDestruct(p: evmc_host_context, address,
   toHost(p).selfDestruct(address.fromEvmc, beneficiary.fromEvmc)
 
 proc call(p: evmc_host_context, msg: var evmc_message): evmc_result {.cdecl.} =
+  var msg = msg # Make a local copy that's ok to modify.
+  msg.value = flip256(msg.value)
   toHost(p).call(msg)
 
 proc getTxContext(p: evmc_host_context): evmc_tx_context {.cdecl.} =
-  toHost(p).getTxContext()
+  result = toHost(p).getTxContext()
+  result.tx_gas_price = flip256(result.tx_gas_price)
+  result.block_difficulty = flip256(result.block_difficulty)
+  result.chain_id = flip256(result.chain_id)
 
 proc getBlockHash(p: evmc_host_context, number: int64): evmc_bytes32 {.cdecl.} =
   # TODO: `HostBlockNumber` is 256-bit unsigned.  It should be changed to match
