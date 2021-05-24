@@ -190,7 +190,24 @@ when defined(evmc_enabled):
       let c = host.computation
       c.setError("Unable to perform noTransfer computations in EVMC mode", true)
     else:
-      let callResult = evmcExecComputation(host)
+      var callResult = evmcExecComputation(host)
+      let c = host.computation
+
+      if callResult.status_code == EVMC_SUCCESS:
+        c.error = nil
+      elif callResult.status_code == EVMC_REVERT:
+        c.setError("EVMC_REVERT", false)
+      else:
+        c.setError($callResult.status_code, true)
+
+      c.gasMeter.gasRemaining = callResult.gas_left
+      c.msg.contractAddress = callResult.create_address.fromEvmc
+      c.output = if callResult.output_size <= 0: @[]
+                 else: @(makeOpenArray(callResult.output_data,
+                                       callResult.output_size.int))
+      if not callResult.release.isNil:
+        {.gcsafe.}:
+          callResult.release(callResult)
 
 proc runComputation*(call: CallParams): CallResult =
   let host = setupHost(call)
