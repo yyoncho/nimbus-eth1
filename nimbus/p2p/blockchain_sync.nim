@@ -184,24 +184,26 @@ proc handleLostPeer(ctx: SyncContext) =
   # `obtainBlocksFromPeer`
   discard
 
-proc getBestBlockNumber(p: Peer): Future[BlockNumber] {.async.} =
+proc getBestBlockNumber(peer: Peer): Future[BlockNumber] {.async.} =
   let request = BlocksRequest(
     startBlock: HashOrNum(isHash: true,
-                          hash: p.state(eth).bestBlockHash),
+                          hash: peer.state(eth).bestBlockHash),
     maxResults: 1,
     skip: 0,
     reverse: true)
 
-  tracePacket ">> Sending eth.GetBlockHeaders (0x03)", peer=p,
-    startBlock=request.startBlock.hash, max=request.maxResults
-  let latestBlock = await p.getBlockHeaders(request)
+  tracePacket ">> Sending eth.GetBlockHeaders/Hash (0x03)",
+    blockHash=($request.startBlock.hash), count=1, peer
+  let latestBlock = await peer.getBlockHeaders(request)
 
   if latestBlock.isSome:
     if latestBlock.get.headers.len > 0:
       result = latestBlock.get.headers[0].blockNumber
-    tracePacket "<< Got reply eth.BlockHeaders (0x04)", peer=p,
-     count=latestBlock.get.headers.len,
-     blockNumber=(if latestBlock.get.headers.len > 0: $result else: "missing")
+    if tracePackets:
+      let blockNumber = if latestBlock.get.headers.len > 0: $result
+                        else: "missing"
+      tracePacket "<< Got reply eth.BlockHeaders (0x04)",
+        got=latestBlock.get.headers.len, `block`=blockNumber, peer
 
 proc obtainBlocksFromPeer(syncCtx: SyncContext, peer: Peer) {.async.} =
   # Update our best block number
@@ -231,25 +233,26 @@ proc obtainBlocksFromPeer(syncCtx: SyncContext, peer: Peer) {.async.} =
 
     var dataReceived = false
     try:
-      tracePacket ">> Sending eth.GetBlockHeaders (0x03)", peer,
-        startBlock=request.startBlock.number, max=request.maxResults
+      tracePacket ">> Sending eth.GetBlockHeaders (0x03)",
+        firstBlock=request.startBlock.number, count=request.maxResults,
+        step=traceStep(request), peer
       let results = await peer.getBlockHeaders(request)
       if results.isSome:
-        tracePacket "<< Got reply eth.BlockHeaders (0x04)", peer,
-          count=results.get.headers.len
+        tracePacket "<< Got reply eth.BlockHeaders (0x04)",
+          got=results.get.headers.len, requested=request.maxResults, peer
         shallowCopy(workItem.headers, results.get.headers)
 
         var bodies = newSeqOfCap[BlockBody](workItem.headers.len)
         var hashes = newSeqOfCap[KeccakHash](maxBodiesFetch)
         template fetchBodies() =
-          tracePacket ">> Sending eth.GetBlockBodies (0x05)", peer,
-            count=hashes.len
+          tracePacket ">> Sending eth.GetBlockBodies (0x05)",
+            hashCount=hashes.len, peer
           let b = await peer.getBlockBodies(hashes)
           if b.isNone:
             raise newException(CatchableError, "Was not able to get the block bodies")
           let bodiesLen = b.get.blocks.len
-          tracePacket "<< Got reply eth.BlockBodies (0x06)", peer,
-            count=bodiesLen
+          tracePacket "<< Got reply eth.BlockBodies (0x06)",
+            got=bodiesLen, requested=hashes.len, peer
           if bodiesLen == 0:
             raise newException(CatchableError, "Zero block bodies received for request")
           elif bodiesLen < hashes.len:
@@ -323,16 +326,16 @@ proc peersAgreeOnChain(a, b: Peer): Future[bool] {.async.} =
     skip: 0,
     reverse: true)
 
-  tracePacket ">> Sending eth.GetBlockHeaders (0x03)", peer=a,
-    startBlock=request.startBlock.hash, max=request.maxResults
+  tracePacket ">> Sending eth.GetBlockHeaders/Hash (0x03)",
+    blockHash=($request.startBlock.hash), count=1, peer=a
   let latestBlock = await a.getBlockHeaders(request)
 
   result = latestBlock.isSome and latestBlock.get.headers.len > 0
   if tracePackets and latestBlock.isSome:
     let blockNumber = if result: $latestBlock.get.headers[0].blockNumber
                       else: "missing"
-    tracePacket "<< Got reply eth.BlockHeaders (0x04)", peer=a,
-      count=latestBlock.get.headers.len, blockNumber
+    tracePacket "<< Got reply eth.BlockHeaders (0x04)",
+      got=latestBlock.get.headers.len, `block`=blockNumber, peer=a
 
 proc randomTrustedPeer(ctx: SyncContext): Peer =
   var k = rand(ctx.trustedPeers.len - 1)
