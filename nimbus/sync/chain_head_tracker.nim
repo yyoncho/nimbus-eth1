@@ -62,6 +62,7 @@ import
   chronos, stint, chronicles, stew/byteutils,
   eth/[common/eth_types, rlp, p2p],
   eth/p2p/[rlpx, private/p2p_types, blockchain_utils, peer_pool],
+  ../p2p/chain/chain_desc,
   ./protocol_eth65,
   ./sync_types
 
@@ -202,8 +203,8 @@ proc peerSyncChainEmptyReply(sp: SyncPeer, request: BlocksRequest) =
      not request.startBlock.isHash and
      request.startBlock.number == 1.toBlockNumber:
     sp.setSyncLocked(0.toBlockNumber, sp.peer.network.chain.genesisHash)
-    # Don't sync genesis state from peers.
-    sp.clearSyncStateRoot()
+    sp.setSyncStateRoot(0.toBlockNumber, sp.peer.network.chain.genesisHash,
+                        sp.peer.network.chain.Chain.genesisStateRoot)
     return
 
   if sp.syncMode == SyncLocked or sp.syncMode == SyncOnlyHash:
