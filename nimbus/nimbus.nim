@@ -121,7 +121,7 @@ proc setupP2P(nimbus: NimbusNode, conf: NimbusConf,
   # Connect directly to the static nodes
   let staticPeers = conf.getStaticPeers()
   for enode in staticPeers:
-    asyncCheck nimbus.ethNode.peerPool.connectToNode(newNode(enode))
+    asyncSpawn nimbus.ethNode.peerPool.connectToNode(newNode(enode))
 
   # Connect via discovery
   let bootNodes = conf.getBootNodes()
