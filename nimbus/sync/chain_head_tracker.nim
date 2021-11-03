@@ -61,7 +61,7 @@ import
   std/bitops,
   chronos, stint, chronicles, stew/byteutils,
   eth/[common/eth_types, rlp, p2p],
-  eth/p2p/[rlpx, private/p2p_types, blockchain_utils, peer_pool],
+  eth/p2p/[rlpx, private/p2p_types],
   ../p2p/chain/chain_desc,
   ./protocol_eth65,
   ./sync_types
