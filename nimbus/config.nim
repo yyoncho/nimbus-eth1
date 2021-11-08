@@ -186,7 +186,7 @@ type
         "- görli  : Test network (proof-of-authority, works across all clients)\n" &
         "- kovan  : Test network (proof-of-authority, for those running OpenEthereum clients)"]#
       defaultValue: "" # the default value is set in makeConfig
-      defaultValueDesc: "mainnet(1)"
+      defaultValueDesc: "goerli(5)"
       abbr: "i"
       name: "network" }: string
 
@@ -198,7 +198,7 @@ type
 
     networkId* {.
       hidden # TODO: use ignore from confutils if its become available
-      defaultValue: MainNet
+      defaultValue: GoerliNet
       name: "network-id"}: NetworkId
 
     networkParams* {.
@@ -308,7 +308,7 @@ type
 
     newSync* {.
       desc: "Enable experimental new sync algorithms"
-      defaultValue: false
+      defaultValue: true
       name: "new-sync" .}: bool
 
     case cmd* {.
