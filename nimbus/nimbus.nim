@@ -18,7 +18,7 @@ import
   chronos, json_rpc/rpcserver, chronicles,
   eth/p2p/rlpx_protocols/les_protocol,
   ./p2p/blockchain_sync, eth/net/nat, eth/p2p/peer_pool,
-  ./sync/[protocol_eth65, newsync],
+  ./sync/[protocol_eth65, protocol_snap1, newsync],
   config, genesis, rpc/[common, p2p, debug], p2p/chain,
   eth/trie/db, metrics, metrics/[chronos_httpserver, chronicles_support],
   graphql/ethapi, context,
@@ -103,6 +103,7 @@ proc setupP2P(nimbus: NimbusNode, conf: NimbusConf,
   # Add protocol capabilities based on protocol flags
   if ProtocolFlag.Eth in protocols:
     nimbus.ethNode.addCapability eth
+    nimbus.ethNode.addCapability snap1
   if ProtocolFlag.Les in protocols:
     nimbus.ethNode.addCapability les
 
