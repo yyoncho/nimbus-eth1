@@ -108,6 +108,19 @@ const
   defaultAdminListenAddressDesc = $defaultAdminListenAddress & ", meaning local host only"
   logLevelDesc = getLogLevels()
 
+# `when` around an option doesn't work with confutils; it fails to compile.
+# Workaround that by setting the `hidden` pragma on EVMC-specific options.  If
+# `--evm=PATH` is used on a non-EVMC executable, we'll output an error.
+when defined(evmc_enabled):
+  {.pragma: showIfEvmc.}
+else:
+  {.pragma: showIfEvmc, hidden.}
+
+const sharedLibText = if defined(linux): " (*.so, *.so.N)"
+                      elif defined(windows): " (*.dll)"
+                      elif defined(macosx): " (*.dylib)"
+                      else: ""
+
 type
   PruneMode* {.pure.} = enum
     Full
@@ -175,6 +188,12 @@ type
       desc: "Enable extra verification when current block number greater than verify-from"
       defaultValueDesc: ""
       name: "verify-from" }: Option[uint64]
+
+    evm* {.
+      desc: "Load alternative EVM from EVMC-compatible shared library" & sharedLibText
+      defaultValue: ""
+      name: "evm"
+      showIfEvmc }: string
 
     network {.
       separator: "\pETHEREUM NETWORK OPTIONS:"

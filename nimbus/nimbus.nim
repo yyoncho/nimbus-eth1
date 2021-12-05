@@ -24,6 +24,9 @@ import
   graphql/ethapi, context,
   "."/[conf_utils, sealer, constants]
 
+when defined(evmc_enabled):
+  import transaction/evmc_dynamic_loader
+
 ## TODO:
 ## * No IPv6 support
 ## * No multiple bind addresses support
@@ -197,6 +200,12 @@ proc start(nimbus: NimbusNode, conf: NimbusConf) =
     let logFile = string conf.logFile.get()
     defaultChroniclesStream.output.outFile = nil # to avoid closing stdout
     discard defaultChroniclesStream.output.open(logFile, fmAppend)
+
+  when defined(evmc_enabled):
+    evmcSetLibraryPath(conf.evm)
+  else:
+    if conf.evm.len != 0:
+      echo "--evm=PATH option requires EVMC, but this is a non-EVMC build"
 
   createDir(string conf.dataDir)
   let trieDB = trieDB newChainDb(string conf.dataDir)
