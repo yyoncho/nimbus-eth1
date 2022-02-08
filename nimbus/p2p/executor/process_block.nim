@@ -22,7 +22,8 @@ import
   ./process_transaction,
   chronicles,
   eth/[common, trie/db],
-  nimcrypto
+  nimcrypto,
+  ../../transaction/db_compare
 
 {.push raises: [Defect].}
 
@@ -33,6 +34,8 @@ import
 proc procBlkPreamble(vmState: BaseVMState; dbTx: DbTransaction;
                      header: BlockHeader, body: BlockBody): bool
                        {.gcsafe, raises: [Defect,CatchableError].} =
+  dbCompareResetSeen()
+
   if vmState.chainDB.config.daoForkSupport and
      vmState.chainDB.config.daoForkBlock == header.blockNumber:
     vmState.mutateStateDB:

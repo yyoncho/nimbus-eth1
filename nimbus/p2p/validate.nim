@@ -217,6 +217,8 @@ proc validateTransaction*(vmState: BaseVMState, tx: Transaction,
                           sender: EthAddress, fork: Fork): bool =
   let balance = vmState.readOnlyStateDB.getBalance(sender)
   let nonce = vmState.readOnlyStateDB.getNonce(sender)
+  # NOTE: Not comparing balance and nonce here against the compact db.
+  # They will be read again when executing the transaction.
 
   if tx.txType == TxEip2930 and fork < FkBerlin:
     debug "invalid tx: Eip2930 Tx type detected before Berlin"

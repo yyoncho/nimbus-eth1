@@ -32,7 +32,6 @@ proc eip1559TxNormalization(tx: Transaction): Transaction =
     result.maxPriorityFee = tx.gasPrice
     result.maxFee = tx.gasPrice
 
-
 proc processTransactionImpl(tx: Transaction, sender: EthAddress,
                             vmState: BaseVMState, fork: Fork): GasInt
                               # wildcard exception, wrapped below
