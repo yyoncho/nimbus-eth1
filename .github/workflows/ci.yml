@@ -18,62 +18,62 @@ jobs:
           - os: linux
             cpu: amd64
             evmc: nimevm
-          # - os: linux
-          #   cpu: i386
-          #   evmc: nimevm
-          # - os: macos
-          #   cpu: amd64
-          #   evmc: nimevm
-          # - os: windows
-          #   cpu: amd64
-          #   evmc: nimevm
-          # - os: windows
-          #   cpu: i386
-          #   evmc: nimevm
-          # - os: linux
-          #   cpu: amd64
-          #   evmc: evmc
-          # - os: linux
-          #   cpu: i386
-          #   evmc: evmc
-          # - os: macos
-          #   cpu: amd64
-          #   evmc: evmc
-          # - os: windows
-          #   cpu: amd64
-          #   evmc: evmc
-          # - os: windows
-          #   cpu: i386
-          #   evmc: evmc
-          # # vm2
-          # - os: linux
-          #   cpu: amd64
-          #   evmc: nimvm2
-          # - os: linux
-          #   cpu: i386
-          #   evmc: nimvm2
-          # - os: windows
-          #   cpu: amd64
-          #   evmc: nimvm2
-          # - os: windows
-          #   cpu: i386
-          #   evmc: nimvm2
-          # - os: macos
-          #   cpu: amd64
-          #   evmc: nimvm2
+          - os: linux
+            cpu: i386
+            evmc: nimevm
+          - os: macos
+            cpu: amd64
+            evmc: nimevm
+          - os: windows
+            cpu: amd64
+            evmc: nimevm
+          - os: windows
+            cpu: i386
+            evmc: nimevm
+          - os: linux
+            cpu: amd64
+            evmc: evmc
+          - os: linux
+            cpu: i386
+            evmc: evmc
+          - os: macos
+            cpu: amd64
+            evmc: evmc
+          - os: windows
+            cpu: amd64
+            evmc: evmc
+          - os: windows
+            cpu: i386
+            evmc: evmc
+          # vm2
+          - os: linux
+            cpu: amd64
+            evmc: nimvm2
+          - os: linux
+            cpu: i386
+            evmc: nimvm2
+          - os: windows
+            cpu: amd64
+            evmc: nimvm2
+          - os: windows
+            cpu: i386
+            evmc: nimvm2
+          - os: macos
+            cpu: amd64
+            evmc: nimvm2
         include:
           - target:
               os: linux
             builder: ubuntu-latest
             shell: bash
-          # - target:
-          #     os: macos
-          #   builder: macos-11
-          #   shell: bash
-          # - target:
-          #     os: windows
-          #   builder: windows-latest
-          #   shell: msys2 {0}
+          - target:
+              os: macos
+            builder: macos-11
+            shell: bash
+          - target:
+              os: windows
+            builder: windows-latest
+            shell: msys2 {0}
 
     defaults:
       run:
@@ -180,13 +180,6 @@ jobs:
          sudo apt-get -q update
          sudo apt-get install -y librocksdb-dev libpcre3-dev
 
-      - name: Install netcat (Linux)
-        if: runner.os == 'Linux'
-        run: |
-         sudo apt-get -q update
-         sudo apt-get install -y netcat-openbsd
-
-
       - name: Build and install rocksdb (Macos)
         if: runner.os == 'Macos'
         run: |
@@ -278,6 +271,11 @@ jobs:
           DEFAULT_MAKE_FLAGS="-j${ncpu} ENABLE_EVMC=${ENABLE_EVMC}"
           mingw32-make ${DEFAULT_MAKE_FLAGS}
           build/nimbus.exe --help
+          pushd vendor/nimbus-eth2
+          env NIMBUSEL_BINARY=../../build/nimbus NIMBUSEL_GENESIS=scripts/nimbusel_genesis.json \
+          ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
+          --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
+          popd
           mingw32-make ${DEFAULT_MAKE_FLAGS} test
           if [[ '${{ matrix.target.cpu }}' == 'amd64' ]]; then
             mingw32-make ${DEFAULT_MAKE_FLAGS}
@@ -296,12 +294,11 @@ jobs:
             env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test || true
           else
             pushd vendor/nimbus-eth2
-            pwd
             env NIMBUSEL_BINARY=../../build/nimbus NIMBUSEL_GENESIS=scripts/nimbusel_genesis.json \
-            bash -x ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
+            ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
             --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
             popd
-            #env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test
+            env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test
           fi
 
       - name: Run nimbus-eth1 tests (Macos)
@@ -312,5 +309,9 @@ jobs:
           make ${DEFAULT_MAKE_FLAGS}
           build/nimbus --help
           # "-static" option will not work for osx unless static system libraries are provided
+          env NIMBUSEL_BINARY=../../build/nimbus NIMBUSEL_GENESIS=scripts/nimbusel_genesis.json \
+          ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
+          --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
+          popd
           make ${DEFAULT_MAKE_FLAGS} test
 
