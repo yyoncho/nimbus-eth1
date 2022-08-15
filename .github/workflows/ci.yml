@@ -18,49 +18,49 @@ jobs:
           - os: linux
             cpu: amd64
             evmc: nimevm
-          - os: linux
-            cpu: i386
-            evmc: nimevm
-          - os: macos
-            cpu: amd64
-            evmc: nimevm
-          - os: windows
-            cpu: amd64
-            evmc: nimevm
-          - os: windows
-            cpu: i386
-            evmc: nimevm
-          - os: linux
-            cpu: amd64
-            evmc: evmc
-          - os: linux
-            cpu: i386
-            evmc: evmc
-          - os: macos
-            cpu: amd64
-            evmc: evmc
-          - os: windows
-            cpu: amd64
-            evmc: evmc
-          - os: windows
-            cpu: i386
-            evmc: evmc
-          # vm2
-          - os: linux
-            cpu: amd64
-            evmc: nimvm2
-          - os: linux
-            cpu: i386
-            evmc: nimvm2
-          - os: windows
-            cpu: amd64
-            evmc: nimvm2
-          - os: windows
-            cpu: i386
-            evmc: nimvm2
-          - os: macos
-            cpu: amd64
-            evmc: nimvm2
+          # - os: linux
+          #   cpu: i386
+          #   evmc: nimevm
+          # - os: macos
+          #   cpu: amd64
+          #   evmc: nimevm
+          # - os: windows
+          #   cpu: amd64
+          #   evmc: nimevm
+          # - os: windows
+          #   cpu: i386
+          #   evmc: nimevm
+          # - os: linux
+          #   cpu: amd64
+          #   evmc: evmc
+          # - os: linux
+          #   cpu: i386
+          #   evmc: evmc
+          # - os: macos
+          #   cpu: amd64
+          #   evmc: evmc
+          # - os: windows
+          #   cpu: amd64
+          #   evmc: evmc
+          # - os: windows
+          #   cpu: i386
+          #   evmc: evmc
+          # # vm2
+          # - os: linux
+          #   cpu: amd64
+          #   evmc: nimvm2
+          # - os: linux
+          #   cpu: i386
+          #   evmc: nimvm2
+          # - os: windows
+          #   cpu: amd64
+          #   evmc: nimvm2
+          # - os: windows
+          #   cpu: i386
+          #   evmc: nimvm2
+          # - os: macos
+          #   cpu: amd64
+          #   evmc: nimvm2
         include:
           - target:
               os: linux
@@ -290,7 +290,7 @@ jobs:
           else
             pushd vendor/nimbus-eth2
             env NIMBUS_EL_BINARY=../../build/nimbus ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
-            --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose
+            --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
             popd
             #env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test
           fi
