@@ -288,7 +288,11 @@ jobs:
             # hide CI failures
             env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test || true
           else
-            env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test
+            pushd vendor/nimbus-eth2
+            env NIMBUS_EL_BINARY=../../build/nimbus ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
+            --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose
+            popd
+            #env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test
           fi
 
       - name: Run nimbus-eth1 tests (Macos)
