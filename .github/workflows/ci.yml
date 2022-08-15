@@ -66,14 +66,14 @@ jobs:
               os: linux
             builder: ubuntu-18.04
             shell: bash
-          - target:
-              os: macos
-            builder: macos-11
-            shell: bash
-          - target:
-              os: windows
-            builder: windows-latest
-            shell: msys2 {0}
+          # - target:
+          #     os: macos
+          #   builder: macos-11
+          #   shell: bash
+          # - target:
+          #     os: windows
+          #   builder: windows-latest
+          #   shell: msys2 {0}
 
     defaults:
       run:
@@ -82,6 +82,14 @@ jobs:
     name: '${{ matrix.target.os }}-${{ matrix.target.cpu }}-${{ matrix.target.evmc }}'
     runs-on: ${{ matrix.builder }}
     steps:
+      - name: Test
+        run: |
+          host localhost
+          ping -c 10 localhost
+          ping -c 10 127.0.0.1
+          cat /etc/hosts
+          ip a
+
       - name: Checkout nimbus-eth1
         uses: actions/checkout@v2
 
@@ -288,7 +296,6 @@ jobs:
             # hide CI failures
             env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test || true
           else
-            sudo netstat -lpn
             pushd vendor/nimbus-eth2
             env NIMBUS_EL_BINARY=../../build/nimbus ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
             --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
