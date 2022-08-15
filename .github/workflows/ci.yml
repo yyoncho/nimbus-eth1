@@ -64,7 +64,7 @@ jobs:
         include:
           - target:
               os: linux
-            builder: ubuntu-18.04
+            builder: ubuntu-latest
             shell: bash
           # - target:
           #     os: macos
