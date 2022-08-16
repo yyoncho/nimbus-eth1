@@ -271,11 +271,6 @@ jobs:
           DEFAULT_MAKE_FLAGS="-j${ncpu} ENABLE_EVMC=${ENABLE_EVMC}"
           mingw32-make ${DEFAULT_MAKE_FLAGS}
           build/nimbus.exe --help
-          pushd vendor/nimbus-eth2
-          env NIMBUSEL_BINARY=../../build/nimbus NIMBUSEL_GENESIS=scripts/nimbusel_genesis.json \
-          ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
-          --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
-          popd
           mingw32-make ${DEFAULT_MAKE_FLAGS} test
           if [[ '${{ matrix.target.cpu }}' == 'amd64' ]]; then
             mingw32-make ${DEFAULT_MAKE_FLAGS}
@@ -290,6 +285,11 @@ jobs:
           build/nimbus --help
           # CC, GOARCH, and CGO_ENABLED are needed to select correct compiler 32/64 bit
           if [[ '${{ matrix.target.cpu }}' == 'i386' ]]; then
+            pushd vendor/nimbus-eth2
+            env NIMBUSEL_BINARY=../../build/nimbus NIMBUSEL_GENESIS=scripts/nimbusel_genesis.json \
+            ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
+            --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
+            popd
             # hide CI failures
             env CC=gcc GOARCH=${GOARCH} CXX=g++ CGO_ENABLED=1 make ${DEFAULT_MAKE_FLAGS} test || true
           else
@@ -309,6 +309,7 @@ jobs:
           make ${DEFAULT_MAKE_FLAGS}
           build/nimbus --help
           # "-static" option will not work for osx unless static system libraries are provided
+          pushd vendor/nimbus-eth2
           env NIMBUSEL_BINARY=../../build/nimbus NIMBUSEL_GENESIS=scripts/nimbusel_genesis.json \
           ./scripts/launch_local_testnet.sh --nodes=3 --stop-at-epoch=7 \
           --disable-htop --reuse-binaries --run-nimbus-el --dl-eth2 --verbose --kill-old-processes
