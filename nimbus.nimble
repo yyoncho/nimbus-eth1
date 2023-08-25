@@ -24,6 +24,8 @@ requires "nim >= 1.2.0",
   "blscurve",
   "evmc",
   "web3",
+  "graphql",
+  "beacon_chain",
   "kzg4844"
 
 binDir = "build"
