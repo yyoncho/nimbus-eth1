@@ -354,6 +354,19 @@
         "sha1": "2e609e43a6934baa71588aa34191bf5529f4c03a"
       }
     },
+    "kzg4844": {
+      "version": "0.1.0",
+      "vcsRevision": "f8b78edcc8296f412c2593e6d60f47c77aa421c5",
+      "url": "https://github.com/status-im/nim-kzg4844",
+      "downloadMethod": "git",
+      "dependencies": [
+        "stew",
+        "unittest2"
+      ],
+      "checksums": {
+        "sha1": "a70467b972948458b4fd1d00188e3c91ad1252a9"
+      }
+    },
     "libbacktrace": {
       "version": "0.0.8",
       "vcsRevision": "b29c22ba0ef13de50b779c776830dbea1d50cd33",

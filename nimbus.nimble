@@ -23,7 +23,8 @@ requires "nim >= 1.2.0",
   "ethash",
   "blscurve",
   "evmc",
-  "web3"
+  "web3",
+  "kzg4844"
 
 binDir = "build"
 
@@ -98,3 +99,6 @@ task nimbus_verified_proxy, "Build Nimbus verified proxy":
 
 task nimbus_verified_proxy_test, "Run Nimbus verified proxy tests":
   test "nimbus_verified_proxy/tests", "test_proof_validation", "-d:chronicles_log_level=ERROR -d:nimbus_db_backend=sqlite"
+
+task echoPaths, "":
+    echo getPaths()
