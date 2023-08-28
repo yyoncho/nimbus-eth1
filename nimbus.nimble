@@ -26,6 +26,7 @@ requires "nim >= 1.2.0",
   "web3",
   "graphql",
   "beacon_chain",
+  "toml_serialization",
   "kzg4844"
 
 binDir = "build"

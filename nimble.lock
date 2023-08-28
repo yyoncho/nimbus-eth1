@@ -471,7 +471,7 @@
     "beacon_chain": {
       "version": "1.4.2",
       "vcsRevision": "cbb1631104ba523dc633f482e709e24c48fab52f",
-      "url": "https://github.com/status-im/nimbus-eth2.git",
+      "url": "https://github.com/yyoncho/nimbus-eth2.git",
       "downloadMethod": "git",
       "dependencies": [
         "yaml",
@@ -609,6 +609,19 @@
       ],
       "checksums": {
         "sha1": "b854765b972958895d8638df1351bcb118e94a16"
+      }
+    },
+    "toml_serialization": {
+      "version": "0.2.4",
+      "vcsRevision": "bad61aa6db4fd7aa0007c99b07276da55cc097da",
+      "url": "https://github.com/status-im/nim-toml-serialization",
+      "downloadMethod": "git",
+      "dependencies": [
+        "serialization",
+        "stew"
+      ],
+      "checksums": {
+        "sha1": "c8ae875585bfadadb17f5a1b78440c3b851db7e7"
       }
     }
   },
