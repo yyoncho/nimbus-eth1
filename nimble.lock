@@ -1,6 +1,17 @@
 {
   "version": 2,
   "packages": {
+    "nimbus_security_resources": {
+      "version": "0.1.0",
+      "vcsRevision": "ce9945b1b159d4c9b628f8c4cd2d262964692810",
+      "url": "https://github.com/status-im/nimbus-security-resources.git",
+      "downloadMethod": "git",
+      "dependencies": [],
+      "checksums": {
+        "sha1": "2b9fea7121c8d49823e0f42157badd9ec635ce48"
+      }
+    },
+
     "yaml": {
       "version": "1.1.0",
       "vcsRevision": "ab3ff9fad45fa7e20d749d0a03a7567225f5dd4a",
@@ -470,7 +481,7 @@
     },
     "beacon_chain": {
       "version": "1.4.2",
-      "vcsRevision": "cbb1631104ba523dc633f482e709e24c48fab52f",
+      "vcsRevision": "ef58c1664a5400b7f5c2098728d2e7081340f5fc",
       "url": "https://github.com/yyoncho/nimbus-eth2.git",
       "downloadMethod": "git",
       "dependencies": [
@@ -508,7 +519,7 @@
         "zxcvbn"
       ],
       "checksums": {
-        "sha1": "bca83d30045c0988e7f7c4642407a04129ff63ab"
+        "sha1": "efbf45e1b2d72ac9b0d602ef8c3a94c69f9da278"
       }
     },
     "bncurve": {

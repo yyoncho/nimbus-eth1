@@ -27,7 +27,8 @@ requires "nim >= 1.2.0",
   "graphql",
   "beacon_chain",
   "toml_serialization",
-  "kzg4844"
+  "kzg4844",
+  "nimbus_security_resources"
 
 binDir = "build"
 
@@ -35,7 +36,7 @@ when declared(namedBin):
   namedBin = {
     "nimbus/nimbus": "nimbus",
     "fluffy/fluffy": "fluffy",
-    "nimbus_verified_proxy/nimbus_verified_proxy": "nimbus_verified_proxy",
+    "nimbus_verified_proxy/nimbus_verified_proxy": "nimbus_verified_proxy"
   }.toTable()
 
 proc buildBinary(name: string, srcDir = "./", params = "", lang = "c") =
