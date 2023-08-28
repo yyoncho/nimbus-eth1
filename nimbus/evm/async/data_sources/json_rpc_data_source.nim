@@ -28,7 +28,7 @@ from web3/ethtypes import Quantity
 #from ../../../premix/parser import prefixHex, parseBlockHeader, parseReceipt, parseTransaction
 
 # Trying to do things the new web3 way:
-from ../../../nimbus_verified_proxy/validate_proof import getAccountFromProof
+from ../../../../nimbus_verified_proxy/validate_proof import getAccountFromProof
 
 export AsyncOperationFactory, AsyncDataSource
 
